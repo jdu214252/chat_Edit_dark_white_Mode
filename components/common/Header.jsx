@@ -46,21 +46,21 @@ export default function Header({ title, navigation }) {
         </TouchableOpacity>
 
 
-        <Button
+        {/* <Button
           title="Профиль"
           onPress={() => navigation.navigate('ProfScren2')}
           color={currentTheme.colors.icon}
-        />
+        /> */}
 
         {/* Профиль */}
-        {/* <TouchableOpacity onPress={() => navigation.navigate('ProfScren2')} style={styles.imageContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfScren2')} style={styles.imageContainer}>
           <Image
             style={styles.image}
             source={{
               uri: 'https://images.pexels.com/photos/28999324/pexels-photo-28999324.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load',
             }}
           />
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </View>
 
       {/* Модальное окно для погоды */}

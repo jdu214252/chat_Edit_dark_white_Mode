@@ -1,149 +1,158 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import { useTheme } from '../ThemeContext';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, TextInput, Image, StyleSheet, Alert } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { Appearance } from 'react-native';
 
-export default function ProfScren2({ navigation }) {
-  const [name, setName] = useState('Иван');
-  const [surname, setSurname] = useState('Иванов');
-  const [editingName, setEditingName] = useState(false);
-  const [editingSurname, setEditingSurname] = useState(false);
+const ProfScren2 = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [firstName, setFirstName] = useState('Иван');
+  const [lastName, setLastName] = useState('Иванов');
+  const [profilePicture, setProfilePicture] = useState(null); // Placeholder for profile image
+  
+  const navigation = useNavigation();
 
-  const { currentTheme } = useTheme(); 
+
+  useEffect(() => {
+    const colorScheme = Appearance.getColorScheme();
+    setIsDarkMode(colorScheme === 'dark');
+  }, []);
+
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
+  
+  const handleEdit = (field) => {
+    Alert.alert('Редактировать', `Вы хотите изменить ${field}?`);
+  };
 
   return (
-    <View style={[styles.container, {backgroundColor: currentTheme.colors.back}]}>
-      {/* Кнопка "Назад" */}
-      <TouchableOpacity style={[styles.backButton, {backgroundColor: currentTheme.colors.icon}]} onPress={() => navigation.goBack()}>
-        <Icon name="arrow-left" size={24} color={currentTheme.colors.arrow_icon_color} />
-      </TouchableOpacity>
-
-      <LinearGradient colors={currentTheme.colors.prof_con_back  || ['#4facfe', '#00f2fe']} style={styles.header}>   {/* ['#4facfe', '#00f2fe'] */}
-        <Image
-          style={styles.avatar}
-          source={{
-            uri: 'https://images.pexels.com/photos/28999324/pexels-photo-28999324.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load',
-          }}
-        />
-        <View style={styles.inputContainer}>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            editable={editingName}
-            style={[styles.input, editingName && styles.inputEditing]}
-          />
-          <TouchableOpacity onPress={() => setEditingName(!editingName)}>
-            <Icon name="pencil" size={20} color={editingName ? '#00f2fe' : '#fff'} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.inputContainer}>
-          <TextInput
-            value={surname}
-            onChangeText={setSurname}
-            editable={editingSurname}
-            style={[styles.input, editingSurname && styles.inputEditing]}
-          />
-          <TouchableOpacity onPress={() => setEditingSurname(!editingSurname)}>
-            <Icon name="pencil" size={20} color={editingSurname ? '#00f2fe' : '#fff'} />
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
-
-      <View style={styles.settingsContainer}>
-        <TouchableOpacity style={styles.settingOption}  onPress={() => navigation.navigate('ChatSettings')} >
-          <Icon name="message" size={24} color={currentTheme.colors.prof_icon} />
-          <Text style={[styles.settingText, {color: currentTheme.colors.setting}]}>Настройки чатов</Text>
+    <View style={[styles.container, { backgroundColor: isDarkMode ? '#1e1e1e' : '#f5f5f5' }]}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#000'} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingOption}>
-          <Icon name="shield-lock" size={24} color={currentTheme.colors.prof_icon} />
-          <Text style={[styles.settingText, {color: currentTheme.colors.setting}]}>Конфиденциальность</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.settingOption}>
-          <Icon name="earth" size={24} color={currentTheme.colors.prof_icon} />
-          <Text style={[styles.settingText, {color: currentTheme.colors.setting}]}>Язык</Text>
+        <TouchableOpacity onPress={toggleDarkMode}>
+          <Ionicons name={isDarkMode ? 'sunny' : 'moon'} size={30} color={isDarkMode ? '#fff' : '#000'} />
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={[styles.logoutButton, {backgroundColor: currentTheme.colors.exit}]}>
-        <Text style={styles.logoutText}>Выйти</Text>
-      </TouchableOpacity>
+      <View style={styles.profileContainer}>
+        
+        <TouchableOpacity style={styles.profilePictureContainer} onPress={() => handleEdit('Фото')}>
+          {profilePicture ? (
+            <Image source={{ uri: profilePicture }} style={styles.profilePicture} />
+          ) : (
+            <Ionicons name="camera" size={40} color="#888" />
+          )}
+        </TouchableOpacity>
+
+        
+        <View style={styles.nameContainer}>
+          <TextInput
+            style={[styles.nameInput, { color: isDarkMode ? '#fff' : '#000' }]}
+            value={firstName}
+            onChangeText={setFirstName}
+            placeholder="Имя"
+            placeholderTextColor={isDarkMode ? '#bbb' : '#666'}
+          />
+          <TextInput
+            style={[styles.nameInput, { color: isDarkMode ? '#fff' : '#000' }]}
+            value={lastName}
+            onChangeText={setLastName}
+            placeholder="Фамилия"
+            placeholderTextColor={isDarkMode ? '#bbb' : '#666'}
+          />
+        </View>
+
+        
+        <View style={styles.settings}>
+          <TouchableOpacity onPress={() => handleEdit('Настройки чата')} style={styles.settingItem}>
+            <MaterialCommunityIcons name="chat" size={24} color={isDarkMode ? '#fff' : '#333'} />
+            <Text style={[styles.settingText, { color: isDarkMode ? '#fff' : '#333' }]}>Настройки чата</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleEdit('Конфиденциальность')} style={styles.settingItem}>
+            <Ionicons name="lock-closed" size={24} color={isDarkMode ? '#fff' : '#333'} />
+            <Text style={[styles.settingText, { color: isDarkMode ? '#fff' : '#333' }]}>Конфиденциальность</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleEdit('Язык')} style={styles.settingItem}>
+            <Ionicons name="language" size={24} color={isDarkMode ? '#fff' : '#333'} />
+            <Text style={[styles.settingText, { color: isDarkMode ? '#fff' : '#333' }]}>Язык</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-    zIndex: 10,
-    backgroundColor: '#4facfe',
-    padding: 10,
-    borderRadius: 20,
+    padding: 20,
   },
   header: {
-    alignItems: 'center',
-    padding: 20,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    // marginTop: 50,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 3,
-    borderColor: '#fff',
-    marginBottom: 10,
-  },
-  inputContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
   },
-  input: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginRight: 10,
-  },
-  inputEditing: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#00f2fe',
-    paddingBottom: 2,
-  },
-  settingsContainer: {
+  profileContainer: {
+    alignItems: 'center',
     marginTop: 20,
-    paddingHorizontal: 20,
   },
-  settingOption: {
+  profilePictureContainer: {
+    width: 120,
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 60,
+    marginBottom: 20,
+    backgroundColor: '#ccc',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  profilePicture: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+  },
+  nameContainer: {
+    marginBottom: 30,
+    width: '100%',
+  },
+  nameInput: {
+    fontSize: 18,
+    padding: 12,
+    marginBottom: 15,
+    borderBottomWidth: 2,
+    borderColor: '#ccc',
+    backgroundColor: 'transparent',
+    borderRadius: 8,
+  },
+  settings: {
+    width: '100%',
+    marginTop: 20,
+  },
+  settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 15,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+    marginBottom: 8,
+    borderRadius: 8,
+    backgroundColor: 'transparent',
   },
   settingText: {
+    fontSize: 18,
+    fontWeight: '500',
     marginLeft: 15,
-    fontSize: 16,
-    color: '#4facfe',
-  },
-  logoutButton: {
-    backgroundColor: '#4facfe',
-    paddingVertical: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginHorizontal: 20,
-    marginTop: 30,
-  },
-  logoutText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
   },
 });
+
+export default ProfScren2;
