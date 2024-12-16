@@ -10,9 +10,9 @@ import { theme } from '../theme';
 import { fabStyles } from '../styles';
 
 export default function StoriesScreen() {
-  const { currentTheme } = useTheme(); 
+  const { isDarkMode } = useTheme(); 
   return (
-    <View style={{flex: 1, backgroundColor: currentTheme.colors.back,}}>
+    <View style={{ backgroundColor: isDarkMode ? '#1C1C1C' : '#fff', flex: 1}}>
       <ScrollView>
         <Stories />
       </ScrollView>

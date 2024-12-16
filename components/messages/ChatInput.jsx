@@ -3,6 +3,7 @@ import { View, TextInput, StyleSheet, TouchableOpacity, FlatList, Text, ScrollVi
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { theme } from '../../theme';
 import Animated from 'react-native-reanimated';
+import { useTheme } from '../../ThemeContext'; 
 
 const frequentlyUsed = ['😀', '😂', '😍', '😭', '😎', '👍', '❤️', '🎉', '🔥', '🙏'];
 const allEmojis = [
@@ -18,6 +19,8 @@ export default function ChatInput({reply, closeReply, isLeft, username}) {
   const [isEmojiPickerVisible, setEmojiPickerVisible] = useState(false);
   // const [heightValue, setHeightValue] = useState(new Animated.Value(70));
 
+  const { isDarkMode } = useTheme();
+
   const handleEmojiSelect = (emoji) => {
     setMessage((prev) => prev + emoji);
   };
@@ -32,7 +35,7 @@ export default function ChatInput({reply, closeReply, isLeft, username}) {
 
   return (
     <KeyboardAvoidingView 
-      style={[styles.container]}
+      style={[styles.container, {backgroundColor: isDarkMode ? '#1C1C1C' : theme.colors.white}]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
      {reply ? (
@@ -108,7 +111,6 @@ export default function ChatInput({reply, closeReply, isLeft, username}) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.colors.white,
     padding: 10,
   },
   replyContainer:{

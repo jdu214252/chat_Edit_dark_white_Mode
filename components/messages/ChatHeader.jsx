@@ -9,7 +9,7 @@ export default function ChatHeader({username, bio, picture, onlineStatus, onPres
     const navigation = useNavigation();
     const { currentTheme } = useTheme();  
   return (
-    <View style={[styles.container, { backgroundColor: currentTheme.colors.message_header}]}>
+    <View style={[styles.container, { backgroundColor: theme.colors.primary}]}>
       <TouchableOpacity style={styles.backButton}>
         <Icon name="angle-left" size={30} color={theme.colors.white} onPress={() => navigation.goBack()} />
       </TouchableOpacity>
@@ -28,11 +28,11 @@ export default function ChatHeader({username, bio, picture, onlineStatus, onPres
                 picture: picture,
                 })} style={{paddingHorizontal: 10}}
             >
-                <Icon name="phone" size={30} color={theme.colors.white}/>
+                <Icon name="phone" size={25} color={theme.colors.white}/>
             </TouchableOpacity>
             
             <TouchableOpacity style={{paddingHorizontal: 10}}>
-                <Icon name="ellipsis-v" size={30} color={theme.colors.white}/>
+                <Icon name="ellipsis-v" size={25} color={theme.colors.white}/>
             </TouchableOpacity>
         
         </View>
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
         paddingTop: 20,
         paddingBottom: 10,
-        borderBottomWidth: 0.5, // ширина границы
-        borderBottomColor: '#130d36'
+        // borderBottomWidth: 0.5, // ширина границы
+        // borderBottomColor: '#130d36'
     },
     backButton: {
         alignSelf: 'center',
@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
         flex: 4
     },
     image:{
-        height: 65,
-        width: 65,
+        height: 45,
+        width: 45,
         borderRadius: 32.5
     },
     usernameAndOnlineStatus:{

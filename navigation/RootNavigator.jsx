@@ -12,6 +12,8 @@ import ProfScren2 from '../screens/ProfScren2';
 
 import HomeNavigator from './HomeNavigator';
 import Header from '../components/common/Header';
+import PrivacyScreen from '../screens/PrivacyScreen';
+import NewSetChat from '../screens/NewSetChat';
 
 const Stack = createStackNavigator();
 
@@ -26,10 +28,12 @@ export default function RootNavigator() {
           header: ({ navigation }) => <Header title="Chat" navigation={navigation} />
         }}/>
         <Stack.Screen name="MessagesScreen" component={MessagesScreen}/>
+        <Stack.Screen name="PrivacyScreen" component={PrivacyScreen}/>
         <Stack.Screen name="OnCallScreen" component={OnCallScreen}/>
         {/* <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Профиль' }} /> */}
         <Stack.Screen name="ProfScren2" component={ProfScren2}  options={{ title: 'Профиль' }} />
         <Stack.Screen name="ChatSettings" component={ChatSettingsScreen} />
+        <Stack.Screen name="NewSetChat" component={NewSetChat} />
       </Stack.Navigator>
   )
 }

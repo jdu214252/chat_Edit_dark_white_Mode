@@ -7,7 +7,7 @@ import { useTheme } from '../../ThemeContext';
 export default function StoryItem({ picture, username, time, stories }) {
   const navigation = useNavigation();
 
-  const { currentTheme } = useTheme(); 
+  const { isDarkMode } = useTheme(); 
 
   return (
     <View style={styles.container}>
@@ -16,8 +16,8 @@ export default function StoryItem({ picture, username, time, stories }) {
           <Image style={styles.image} source={{uri: picture}}/>
         </View>
         <View style={styles.textsContainer}>
-          <Text numberOfLines={1} style={[styles.username, {color: currentTheme.colors.black}]}>{username}</Text>
-          <Text numberOfLines={1} style={[styles.time, {color: currentTheme.colors.title}]}>{time}</Text>
+          <Text numberOfLines={1} style={[styles.username, {color: isDarkMode ? '#fff' : theme.colors.black}]}>{username}</Text>
+          <Text numberOfLines={1} style={[styles.time, {color: isDarkMode ? '#D8C9E0' : theme.colors.title}]}>{time}</Text>
         </View>
       </TouchableOpacity>
     </View>

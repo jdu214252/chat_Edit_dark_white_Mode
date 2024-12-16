@@ -53,7 +53,7 @@ const MessagesList = ({onSwipeToReply}) => { //onSwipeEnd
       
     ]);
 
-    const { currentTheme } = useTheme();  
+    const { isDarkMode } = useTheme();  
 
     const user = useRef(0);
     const scrollView = useRef();
@@ -65,7 +65,7 @@ const MessagesList = ({onSwipeToReply}) => { //onSwipeEnd
 
   return (
     <ScrollView  style={{
-      backgroundColor: currentTheme.colors.back || '#FFFFFF',
+      backgroundColor: isDarkMode ? '#1C1C1C' : theme.colors.white || '#FFFFFF',
       flex: 1,
     }}  
       ref={(ref) => (scrollView.current = ref)} onContentSizeChange={() => {

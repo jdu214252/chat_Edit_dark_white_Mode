@@ -1,83 +1,43 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { Appearance } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// Здесь вы можете добавить другие темы
-const themes = {
-  light: {
-    colors: {
-      primary: '#FFC107',
-      white: '#ffffff',
-      black: '#000000',
-      messageBackground: '#1B5583',
-      back: '#ffffff',
-      title: '#b9b9b9',
-      icon: '#ffffff',
-      prof_icon: '#FFC107',
-      setting: '#000000',
-      prof_con_back: ['#FFC107', '#FFC107'],
-      arrow_icon: '#ffa60b',
-      arrow_icon_color: '#000000',
-      exit: '#FFC107',
-      message_header: '#FFC107'
-      // и так далее...
-    },
-  },
-  dark: {
-    colors: {
-      primary: '#2F3136',
-      white: '#000000',
-      black: '#ffffff',
-      messageBackground: '#333',
-      back: '#2F3136',
-      title: '#b9b9b9',
-      icon: '#ffffff',
-      prof_icon: '#ffffff',
-      setting: '#ffffff',
-      prof_con_back: ['#4facfe', '#00f2fe'],
-      arrow_icon: '#4facfe',
-      arrow_icon_color: '#000000',
-      exit: '#4facfe',
-      message_header: '#2F3138'
-      // и так далее...
-    },
-  },
-};
 
 const ThemeContext = createContext();
 
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }) => {
-  const [currentTheme, setCurrentTheme] = useState(themes.light);  // По умолчанию светлая тема
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     const loadTheme = async () => {
       try {
-        const savedTheme = await AsyncStorage.getItem('theme');
-        if (savedTheme && themes[savedTheme]) {
-          setCurrentTheme(themes[savedTheme]);
+        const storedMode = await AsyncStorage.getItem('darkMode');
+        if (storedMode !== null) {
+          setIsDarkMode(JSON.parse(storedMode));
+        } else {
+          const colorScheme = Appearance.getColorScheme();
+          setIsDarkMode(colorScheme === 'dark');
         }
       } catch (error) {
-        console.error('Failed to load theme from storage', error);
+        console.error('Ошибка загрузки режима:', error);
       }
     };
-
     loadTheme();
   }, []);
 
-  const switchTheme = async (themeName) => {
-    if (themes[themeName]) {
-      setCurrentTheme(themes[themeName]);
-      try {
-        await AsyncStorage.setItem('theme', themeName);
-      } catch (error) {
-        console.error('Failed to save theme to storage', error);
-      }
+  const toggleDarkMode = async () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    try {
+      await AsyncStorage.setItem('darkMode', JSON.stringify(newMode));
+    } catch (error) {
+      console.error('Ошибка сохранения режима:', error);
     }
   };
 
   return (
-    <ThemeContext.Provider value={{ currentTheme, switchTheme }}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode, setIsDarkMode }}>
       {children}
     </ThemeContext.Provider>
   );

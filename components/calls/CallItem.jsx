@@ -9,7 +9,7 @@ import { useTheme } from '../../ThemeContext';
 
 export default function CallItem({username, picture, callStatus, time }) {
     const navigation = useNavigation();
-    const { currentTheme } = useTheme(); 
+    const { isDarkMode } = useTheme(); 
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -17,14 +17,14 @@ export default function CallItem({username, picture, callStatus, time }) {
       </View>
       <View style={styles.usernameAndCall}>
         <View style={styles.usernameAndStatus}>
-            <Text style={[styles.username, {color: currentTheme.colors.black}]}>{username}</Text>
+            <Text style={[styles.username, {color: isDarkMode ? '#fff' : theme.colors.black}]}>{username}</Text>
             <View style={styles.callStatusContainer}>
                 <FAIcon style={styles.iconStyles} name={
                     (callStatus === 0 || callStatus === 1) ? "arrow-right" : "arrow-left"
                     } 
                     size={15} color={(callStatus === 0 || callStatus === 2) ? theme.colors.danger : theme.colors.success} 
                 />
-                <Text style={[styles.time, {color: currentTheme.colors.title}]}>{time}</Text>
+                <Text style={[styles.time, {color: isDarkMode ? '#D8C9E0' : theme.colors.title}]}>{time}</Text>
             </View>
         </View>
         <View style={{flexDirection: 'row'}}>

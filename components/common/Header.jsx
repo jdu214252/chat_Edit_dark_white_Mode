@@ -1,15 +1,39 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Image, ActivityIndicator, Button  } from 'react-native';
+import React, { useState, useEffect  } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Image, ActivityIndicator, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Icon from '@expo/vector-icons/FontAwesome';
-import { useTheme } from '../../ThemeContext';  // Подключаем контекст темы
+// import Icon from '@expo/vector-icons/FontAwesome';
+import { useTheme } from '../../ThemeContext';
+import { useTranslation } from 'react-i18next';
+import { theme } from '../../theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
 
 export default function Header({ title, navigation }) {
+  const { t, i18n } = useTranslation();  // Подключение переводов
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const { currentTheme } = useTheme();  // Получаем текущую тему из контекста
+  const [ghostMode, setGhostMode] = useState(false); 
+  const [fadeAnim] = useState(new Animated.Value(0)); 
+  const [showGhostMessage, setShowGhostMessage] = useState(false); 
+
+
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const savedLanguage = await AsyncStorage.getItem('language');
+      if (savedLanguage) {
+        i18n.changeLanguage(savedLanguage);
+      }
+    };
+    loadLanguage();
+  }, []);
+
+  // const changeLanguage = async (languageCode) => {
+  //   i18n.changeLanguage(languageCode);
+  //   await AsyncStorage.setItem('language', languageCode);
+  // };
 
   const fetchWeather = async () => {
     setLoading(true);
@@ -35,24 +59,51 @@ export default function Header({ title, navigation }) {
     }
   };
 
-  return (
-    <View style={[styles.container, { backgroundColor: currentTheme.colors.primary }]}>
-      <View style={styles.headerContainer}>
-        <Text style={[styles.headerTitle, { color: currentTheme.colors.icon }]}>{title}</Text>
 
-        {/* Иконка погоды */}
+  useEffect(() => {
+    if (showGhostMessage) {
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        setTimeout(() => {
+          Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: true,
+          }).start(() => setShowGhostMessage(false));
+        }, 2000); // Показывать текст 2 секунды
+      });
+    }
+  }, [showGhostMessage]);
+
+
+const toggleGhostMode = () => {
+  setGhostMode(prevState => !prevState);
+  setShowGhostMessage(true);
+};
+
+  return (
+    <View style={[styles.container, {backgroundColor: theme.colors.primary}]}>
+      <View style={styles.headerContainer}>
+{/* 
+      <TouchableOpacity onPress={() => navigation.openDrawer()}>
+        <Icon name="bars" size={24} color="white" />
+      </TouchableOpacity> */}
+
+        <Text style={styles.headerTitle}>{"DeFensy"}</Text>
+
         <TouchableOpacity onPress={fetchWeather} style={styles.weatherIconContainer}>
-          <Icon name="cloud" size={24} color={currentTheme.colors.icon} />
+          <Icon name="cloud" size={24} color="white" />
+        </TouchableOpacity>
+        
+
+        {/* Icon  Ghost for Ghost mode */}
+        <TouchableOpacity onPress={toggleGhostMode} style={styles.iconContainer}>
+          <Icon name="ghost" size={24} color={ghostMode ? 'green' : 'white'} />
         </TouchableOpacity>
 
-
-        {/* <Button
-          title="Профиль"
-          onPress={() => navigation.navigate('ProfScren2')}
-          color={currentTheme.colors.icon}
-        /> */}
-
-        {/* Профиль */}
         <TouchableOpacity onPress={() => navigation.navigate('ProfScren2')} style={styles.imageContainer}>
           <Image
             style={styles.image}
@@ -63,40 +114,47 @@ export default function Header({ title, navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* Модальное окно для погоды */}
+
       <Modal visible={modalVisible} transparent animationType="fade">
         <View style={styles.modalBackground}>
-          <LinearGradient colors={['#4facfe', '#00f2fe']} style={[styles.modalContainer, {backgroundColor: currentTheme.colors.back } ]}>  
+          <LinearGradient colors={['#4facfe', '#00f2fe']} style={styles.modalContainer}>
             {loading ? (
               <ActivityIndicator size="large" color="white" />
             ) : weatherData ? (
               <>
-                <Text style={styles.cityText}>{weatherData.city}, {weatherData.country}</Text>
+                <Text style={styles.cityText}>{`${weatherData.city}, ${weatherData.country}`}</Text>
                 <Icon name="cloud" size={80} color="white" />
-
-                <Text style={styles.temperatureText}>
-                  {Math.round(weatherData.temperature)}°C
-                </Text>
+                <Text style={styles.temperatureText}>{`${Math.round(weatherData.temperature)}°C`}</Text>
                 <Text style={styles.descriptionText}>
                   {weatherData.description.charAt(0).toUpperCase() + weatherData.description.slice(1)}
                 </Text>
                 <View style={styles.detailsContainer}>
-                  <Text style={styles.detailText}>Влажность: {weatherData.humidity}%</Text>
-                  <Text style={styles.detailText}>Скорость ветра: {weatherData.windSpeed} м/с</Text>
+                  <Text style={styles.detailText}>{`${t('humidity')}: ${weatherData.humidity}%`}</Text>
+                  <Text style={styles.detailText}>{`${t('windspeed')}: ${weatherData.windSpeed} м/с`}</Text>
                 </View>
               </>
             ) : (
-              <Text style={styles.errorText}>Не удалось загрузить данные о погоде</Text>
+              <Text style={styles.errorText}>{t('error')}</Text>
             )}
             <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Закрыть</Text>
+              <Text style={styles.closeButtonText}>{t('close')}</Text>
             </TouchableOpacity>
           </LinearGradient>
         </View>
       </Modal>
+
+      {showGhostMessage && (
+  <Animated.View style={[styles.ghostModeContainer, { opacity: fadeAnim }]}>
+    <Text style={styles.ghostModeText}>
+      {ghostMode ? 'Ghost mode enabled!' : 'Ghost mode disabled!'}
+    </Text>
+  </Animated.View>
+)}
     </View>
+    
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -112,6 +170,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
+    color: 'white'
   },
   weatherIconContainer: {
     flex: 1,
@@ -182,6 +241,27 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     color: '#4facfe',
+    fontWeight: 'bold',
+  },
+  iconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 10,
+    padding: 10,
+    borderRadius: 10,
+  },
+  ghostModeContainer: {
+    position: 'absolute',
+    top: 8,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  ghostModeText: {
+    color: 'white',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });

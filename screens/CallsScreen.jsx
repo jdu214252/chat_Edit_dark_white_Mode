@@ -8,9 +8,9 @@ import { fabStyles } from '../styles';
 import { useTheme } from '../ThemeContext';
 
 export default function CallsScreen() {
-  const { currentTheme } = useTheme(); 
+  const { isDarkMode } = useTheme(); 
   return (
-    <View style={{flex: 1,  backgroundColor: currentTheme.colors.back}}>
+    <View style={{flex: 1,  backgroundColor: isDarkMode ? '#1C1C1C' : theme.colors.white}}>
       <ScrollView>
         <Calls />
       </ScrollView>

@@ -4,13 +4,14 @@ import ChatHeader from '../components/messages/ChatHeader';
 import ChatInput from '../components/messages/ChatInput';
 import MessagesList from '../components/messages/MessagesList';
 import { useTheme } from '../ThemeContext';
+import { theme } from '../theme';
 
 const MessagesScreen = ({ navigation, route}) => {
     const {username, bio, picture, isBlocked, isMuted} = route.params;
     const [reply, setReply] = useState("");
     const [isLeft, setIsLeft] = useState();
 
-    const { currentTheme } = useTheme(); 
+    const { isDarkMode } = useTheme();
 
     const swipeToReply = (message, isLeft) => {
       setReply(message.length > 50 ? message.slice(0, 50) + '...' : message); // Fix typo
@@ -23,7 +24,7 @@ const MessagesScreen = ({ navigation, route}) => {
     };
 
   return (
-    <View style={{flex: 1, backgroundColor: currentTheme.colors.back}}>
+    <View style={{flex: 1, backgroundColor: isDarkMode ? 'red' : theme.colors.white}}>
       <ChatHeader
         onPress={() => {}}
         username={username} 

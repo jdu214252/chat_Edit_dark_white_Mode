@@ -8,13 +8,12 @@ import { theme } from '../../theme';
 import { useTheme } from '../../ThemeContext';
 
 export default function SearchInput() {
-    const { currentTheme } = useTheme(); 
+    const { isDarkMode } = useTheme(); 
   return (
     <View style={styles.container}>
         <View style={styles.row}>
             <Icon name="search" size={20} color={theme.colors.searchIcon}/>
-            <TextInput style={[styles.input, {color: currentTheme.colors.title}]}  placeholder='Search' maxLength={10}/>
-
+            <TextInput style={[styles.input, {color: isDarkMode ? '#D8C9E0' : '#000'}]}  placeholder='Search' maxLength={10}/>
         </View>
     </View>
   )
